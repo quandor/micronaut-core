@@ -48,6 +48,21 @@ class NettyHttpRequestSpec extends Specification {
         altered.headers.get("foo") == 'bar'
     }
 
+
+    void "do not loose uri changes on multiple mutations"() {
+        given:
+        DefaultFullHttpRequest nettyRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, GET, "/")
+        def request = new NettyHttpRequest(nettyRequest, Mock(ChannelHandlerContext), new DefaultConversionService(), new HttpServerConfiguration())
+
+        when:
+        def altered = request
+            .mutate().uri({ builder -> builder.path("/foo")})
+            .mutate().uri({ builder -> builder.path("/bar")})
+
+        then:
+        altered.path == '/foo/bar'
+    }
+
     void "test mutating a mutable request"() {
         given:
         DefaultFullHttpRequest nettyRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, GET, "/foo/bar")

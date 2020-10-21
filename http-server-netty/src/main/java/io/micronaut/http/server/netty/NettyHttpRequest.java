@@ -563,7 +563,7 @@ public class NettyHttpRequest<T> extends AbstractNettyHttpRequest<T> implements 
 
         @Override
         public MutableHttpRequest<T> mutate() {
-            return new NettyMutableHttpRequest();
+            return this;
         }
     }
 
